@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.javan.manager.mapper.UserMapper">
+  <resultMap id="userMap" type="com.javan.manager.entity.User">
+    <id column="USERID" jdbcType="VARCHAR" property="userid" />
+    <result column="USERNAME" jdbcType="VARCHAR" property="username" />
+    <result column="ACCOUNT" jdbcType="VARCHAR" property="account" />
+    <result column="PASSWORD" jdbcType="VARCHAR" property="password" />
+    <result column="SEX" jdbcType="VARCHAR" property="sex" />
+    <result column="DEPTID" jdbcType="VARCHAR" property="deptid" />
+    <result column="LOCKED" jdbcType="VARCHAR" property="locked" />
+    <result column="REMARK" jdbcType="VARCHAR" property="remark" />
+    <result column="USERTYPE" jdbcType="VARCHAR" property="usertype" />
+    <result column="ENABLED" jdbcType="VARCHAR" property="enabled" />
+    <result column="MOBILE" jdbcType="VARCHAR" property="mobile" />
+    <result column="EMAIL" jdbcType="VARCHAR" property="email" />
+    <result column="ADDRESS" jdbcType="VARCHAR" property="address" />
+    <result column="PERSONID" jdbcType="VARCHAR" property="personid" />
+    <result column="CARDID" jdbcType="VARCHAR" property="cardid" />
+    <result column="LOGINCOUNT" jdbcType="DECIMAL" property="logincount" />
+    <result column="LOGINTIME" jdbcType="TIMESTAMP" property="logintime" />
+    <result column="BUSTYPE" jdbcType="VARCHAR" property="bustype" />
+    <result column="CERTTYPE" jdbcType="VARCHAR" property="certtype" />
+    <result column="CERTCODE" jdbcType="VARCHAR" property="certcode" />
+    <result column="TELEPHONE" jdbcType="VARCHAR" property="telephone" />
+  </resultMap>
+
+
+	 <!-- 批量操作和foreach标签 -->
+    
+    <insert id="batchInsertUser" parameterType="java.util.List">
+       insert into EAUSER values 
+        <foreach collection="users" item="users" separator=",">
+         (null,#{users.username},#{users.password},#{users.account}, #{users.sex}, #{users.deptid}, #{users.locked}, 
+         #{users.remark}, #{users.usertype}, #{users.enabled}, #{users.mobile}, #{users.email}, #{users.address}, #{users.personid}, #{users.cardid}, 
+         #{users.logincount}, #{users.logintime}, #{users.bustype}, #{users.certtype}, #{users.certcode}, #{users.telephone})
+        </foreach>
+    </insert>
+    
+   
+    
+    <delete id="batchDeleteUser">
+       delete from EAUSER where userid in (
+         <foreach collection="list" item="list" separator=",">
+          #{userid}
+         </foreach>
+       )
+    </delete>
+    
+    <!--collection 为用于遍历的元素（必选），支持数组、List、Set  -->
+    <!-- item 表示集合中每一个元素进行迭代时的别名. -->
+    <!--separator表示在每次进行迭代之间以什么符号作为分隔 符.  -->
+    
+    <!--#在生成SQL时，对于字符类型参数，会拼装引号
+         $在生成SQL时，不会拼装引号，可用于order by之类的参数拼装
+      -->
+    <select id="pagerUser" parameterType="java.util.Map" resultMap="userMap">
+      select * from EAUSER where 1=1
+      <if test="username!=null">
+       and username like '%${username}%'
+      </if>
+       limit ${index},${pageSize} 
+    </select>
+    
+    <select id="countUser" parameterType="java.util.Map" resultType="int">
+        select count(*) from EAUSER where 1=1 
+        <if test="username != null">
+            and username like '%${username}%'    
+        </if>
+    </select>
+ 
+</mapper>
